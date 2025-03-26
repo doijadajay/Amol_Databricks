@@ -28,7 +28,7 @@ steps:
     # echo "DATABRICKS_HOST=${host}"  # Verify that secret variables are available
     # echo "DATABRICKS_TOKEN=${token}"  # Verify that secret variables are available
     export DATABRICKS_HOST=$(host)  # Injecting secret environment variables
-    export DATABRICKS_TOKEN=$(token})  # Injecting secret environment variables
+    export DATABRICKS_TOKEN=$(token)  # Injecting secret environment variables
     databricks --version  # Verify Databricks CLI version
   displayName: 'Configure Databricks CLI'
 
