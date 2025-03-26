@@ -1,0 +1,35 @@
+trigger:
+  branches:
+    include:
+      - main  # Trigger on changes to the main branch
+
+pool:
+  vmImage: 'ubuntu-latest'  # Using an Ubuntu agent for the pipeline
+
+steps:
+# Checkout the code from GitHub
+- task: Checkout@1
+  displayName: 'Checkout GitHub repository'
+
+# Install Databricks CLI
+- script: |
+    pip install databricks-cli
+  displayName: 'Install Databricks CLI'
+
+# Set up Databricks CLI to connect to your Databricks workspace
+- script: |
+    echo "DATABRICKS_HOST=$DATABRICKS_HOST" >> ~/.bashrc
+    echo "DATABRICKS_TOKEN=$DATABRICKS_TOKEN" >> ~/.bashrc
+    source ~/.bashrc
+  displayName: 'Configure Databricks CLI'
+
+# Clone the GitHub repository
+- script: |
+    git clone https://github.com/doijadajay/Amol_Databricks.git
+    cd Amol_Databricks
+  displayName: 'Clone GitHub repository'
+
+# Deploy the notebook to Databricks workspace
+- script: |
+    databricks workspace import --overwrite Amol_Databricks/Sample-Notebook.py Workspace/Sample_Notebook/
+  displayName: 'Deploy notebook to Databricks'
