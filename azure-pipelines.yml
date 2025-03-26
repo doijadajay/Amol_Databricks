@@ -33,3 +33,8 @@ steps:
 - script: |
     databricks workspace import --overwrite Amol_Databricks/Sample-Notebook.py /Workspace/Sample_Notebook/Sample-Notebook.py
   displayName: 'Deploy notebook to Databricks'
+
+- script: |
+    echo "All Environment Variables"
+    printenv
+  displayName: 'Print all environment variables'
