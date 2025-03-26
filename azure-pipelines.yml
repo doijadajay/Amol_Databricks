@@ -7,7 +7,7 @@ pool:
   vmImage: 'ubuntu-latest'  # Using an Ubuntu agent for the pipeline
 
 variables:
-  - group: Databricks-sample-example
+  - group: databricks-secret
 steps:
 # Checkout the code from GitHub
 - task: Checkout@1
@@ -21,10 +21,14 @@ steps:
 # Set up Databricks CLI to connect to your Databricks workspace using secrets from the Variable Group
 - script: |
     echo "Setting up Databricks CLI"
-    echo "DATABRICKS_HOST=${DATABRICKS_HOST}"  # Verify that secret variables are available
-    echo "DATABRICKS_TOKEN=${DATABRICKS_TOKEN}"  # Verify that secret variables are available
-    export DATABRICKS_HOST="${DATABRICKS_HOST}"  # Injecting secret environment variables
-    export DATABRICKS_TOKEN="${DATABRICKS_TOKEN}"  # Injecting secret environment variables
+    # echo "DATABRICKS_HOST=${DATABRICKS_HOST}"  # Verify that secret variables are available
+    # echo "DATABRICKS_TOKEN=${DATABRICKS_TOKEN}"  # Verify that secret variables are available
+    # export DATABRICKS_HOST="${DATABRICKS_HOST}"  # Injecting secret environment variables
+    # export DATABRICKS_TOKEN="${DATABRICKS_TOKEN}"  # Injecting secret environment variables
+    echo "DATABRICKS_HOST=${host}"  # Verify that secret variables are available
+    echo "DATABRICKS_TOKEN=${token}"  # Verify that secret variables are available
+    export DATABRICKS_HOST="${token}"  # Injecting secret environment variables
+    export DATABRICKS_TOKEN="${token}"  # Injecting secret environment variables
     databricks --version  # Verify Databricks CLI version
   displayName: 'Configure Databricks CLI'
 
