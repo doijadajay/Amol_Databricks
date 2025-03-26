@@ -6,8 +6,8 @@
 pool:
   vmImage: 'ubuntu-latest'  # Using an Ubuntu agent for the pipeline
 
-variables:
-  - group: databricks-secret
+# variables:
+#   - group: databricks-secret
 steps:
 # Checkout the code from GitHub
 - task: Checkout@1
