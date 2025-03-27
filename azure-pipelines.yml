@@ -1,57 +1,45 @@
-trigger:
-- main  # Trigger the pipeline when changes are pushed to the 'main' branch
-
-pool:
-  vmImage: 'ubuntu-latest'  # Use an Ubuntu-based agent to run the pipeline
-
-variables:
-  # Databricks workspace URL and token will be taken from the pipeline's secret variables
-  databricksWorkspaceUrl: 'https://adb-4276282781475924.4.azuredatabricks.net'  # Your Databricks Workspace URL
-  databricksToken: $(DATABRICKS_TOKEN)  # Databricks token stored as a secret in Azure DevOps
-  databricksFolderPath: '/Workspace/Sample_Notebook'  # Databricks Workspace path for the notebook
-  notebookFilePath: 'Sample-Notebook.py'  # Path to the notebook file in the repository
-
-# jobs:
-# - job: DeployToDatabricks
-#   displayName: 'Deploy Notebook to Databricks Workspace'
-  
-steps:
-# Step 1: Checkout the code from GitHub repository
-- checkout: self
-  displayName: 'Checkout Code from GitHub'
-
-# Step 2: Install Python and Databricks CLI
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '3.8'
-  displayName: 'Use Python 3.8'
-
-- script: |
-    pip install databricks-cli
-  displayName: 'Install Databricks CLI'
-
-# Step 3: Print the Databricks workspace URL and token (for debugging)
-- script: |
-    echo "Databricks Workspace URL: $(databricksWorkspaceUrl)"
-    echo "Databricks Token: $(databricksToken)"
-  displayName: 'Print Databricks Workspace URL and Token'
-
-# Step 4: Configure Databricks CLI with token and workspace URL
-- script: |
-    echo "Configuring Databricks CLI..."
-    databricks configure --token <<EOF
-    $(databricksWorkspaceUrl)
-    $(databricksToken)
-    EOF
-  displayName: 'Configure Databricks CLI'
-
-# Step 5: Upload the notebook to Databricks workspace
-- script: |
-    echo "Uploading notebook to Databricks workspace..."
-    databricks workspace import ${{ variables.notebookFilePath }} ${{ variables.databricksFolderPath }}/Sample-Notebook.py --overwrite
-  displayName: 'Upload Notebook to Databricks Workspace'
-
-# Step 6: Indicate success
-- script: |
-    echo "Notebook deployed to Databricks Workspace successfully."
-  displayName: 'Deployment Successful'
+# trigger:
+ #   branches:
+ #     include:
+ #       - main  # Trigger on changes to the main branch
+ 
+ pool:
+   vmImage: 'ubuntu-latest'  # Using an Ubuntu agent for the pipeline
+ 
+ variables:
+   - group: databricks-secret
+ steps:
+ # Checkout the code from GitHub
+ - task: Checkout@1
+   displayName: 'Checkout GitHub repository'
+ 
+ # Install Databricks CLI
+ - script: |
+     pip install databricks-cli
+   displayName: 'Install Databricks CLI'
+ 
+ # Set up Databricks CLI to connect to your Databricks workspace using secrets from the Variable Group
+ - script: |
+     echo "Setting up Databricks CLI"
+     # echo "DATABRICKS_HOST=${DATABRICKS_HOST}"  # Verify that secret variables are available
+     # echo "DATABRICKS_TOKEN=${DATABRICKS_TOKEN}"  # Verify that secret variables are available
+     # export DATABRICKS_HOST="${DATABRICKS_HOST}"  # Injecting secret environment variables
+     # export DATABRICKS_TOKEN="${DATABRICKS_TOKEN}"  # Injecting secret environment variables
+     # echo "DATABRICKS_HOST=${host}"  # Verify that secret variables are available
+     # echo "DATABRICKS_TOKEN=${token}"  # Verify that secret variables are available
+     export DATABRICKS_HOST=$(host)  # Injecting secret environment variables
+     export DATABRICKS_TOKEN=$(token})  # Injecting secret environment variables
+     export DATABRICKS_TOKEN=$(token)  # Injecting secret environment variables
+     databricks --version  # Verify Databricks CLI version
+   displayName: 'Configure Databricks CLI'
+ 
+ # Clone the GitHub repository
+ - script: |
+     git clone https://github.com/doijadajay/Amol_Databricks.git
+     cd Amol_Databricks
+   displayName: 'Clone GitHub repository'
+ 
+ # Deploy the notebook to Databricks workspace
+ - script: |
+     databricks workspace import --overwrite Amol_Databricks/Sample-Notebook.py /Workspace/Sample_Notebooks/Sample-Notebook.py
+   displayName: 'Deploy notebook to Databricks'
