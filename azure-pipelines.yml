@@ -17,25 +17,26 @@ steps:
   # Install Databricks CLI
   - script: |
       pip install databricks-cli
+      databricks --version
     displayName: 'Install Databricks CLI'
 
-  # Set up Databricks CLI to connect to your Databricks workspace using secrets from the Variable Group
-  - script: |
-      echo "Setting up Databricks CLI"
-      export DATABRICKS_HOST=$(DATABRICKS_HOST)  # Injecting secret environment variables
-      export DATABRICKS_TOKEN=$(DATABRICKS_TOKEN)  # Injecting secret environment variables
-      echo "DATABRICKS_HOST=$DATABRICKS_HOST"  # Verify that the host is correctly set
-      echo "DATABRICKS_TOKEN=$DATABRICKS_TOKEN"  # Verify that the token is correctly set
-      databricks --version  # Verify Databricks CLI version
-    displayName: 'Configure Databricks CLI'
+  # # Set up Databricks CLI to connect to your Databricks workspace using secrets from the Variable Group
+  # - script: |
+  #     echo "Setting up Databricks CLI"
+  #     export DATABRICKS_HOST=$(DATABRICKS_HOST)  # Injecting secret environment variables
+  #     export DATABRICKS_TOKEN=$(DATABRICKS_TOKEN)  # Injecting secret environment variables
+  #     echo "DATABRICKS_HOST=$DATABRICKS_HOST"  # Verify that the host is correctly set
+  #     echo "DATABRICKS_TOKEN=$DATABRICKS_TOKEN"  # Verify that the token is correctly set
+  #     databricks --version  # Verify Databricks CLI version
+  #   displayName: 'Configure Databricks CLI'
 
-  # Clone the GitHub repository
-  - script: |
-      git clone https://github.com/doijadajay/Amol_Databricks.git
-      cd Amol_Databricks
-    displayName: 'Clone GitHub repository'
+  # # Clone the GitHub repository
+  # - script: |
+  #     git clone https://github.com/doijadajay/Amol_Databricks.git
+  #     cd Amol_Databricks
+  #   displayName: 'Clone GitHub repository'
 
-  # Deploy the notebook to Databricks workspace
-  - script: |
-      databricks workspace import --overwrite Amol_Databricks/Sample-Notebook.py /Workspace/Sample_Notebooks/Sample-Notebook.py
-    displayName: 'Deploy notebook to Databricks'
+  # # Deploy the notebook to Databricks workspace
+  # - script: |
+  #     databricks workspace import --overwrite Amol_Databricks/Sample-Notebook.py /Workspace/Sample_Notebooks/Sample-Notebook.py
+  #   displayName: 'Deploy notebook to Databricks'
