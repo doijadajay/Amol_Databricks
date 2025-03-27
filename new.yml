@@ -6,8 +6,8 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'  # Using an Ubuntu agent for the pipeline
 
-variables:
-  - group: Databricks-sample-example  # Ensure 'databricks-secret' is a valid Variable Group
+# variables:
+#   - group: Databricks-sample-example  # Ensure 'databricks-secret' is a valid Variable Group
 
 steps:
   # Checkout the code from GitHub
