@@ -1,44 +1,36 @@
-# trigger:
-#   branches:
-#     include:
-#       - main  # Trigger on changes to the main branch
+trigger:
+- main  # Trigger on changes to the main branch
+
+variables:
+  DATABRICKS_HOST: $(DATABRICKS_HOST)  # Set this environment variable in your Azure DevOps pipeline variables
+  DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)  # Set this environment variable in your Azure DevOps pipeline variables
+  NOTEBOOK_PATH: 'notebook.py'  # Path to your notebook file in the repository
+  DEPLOY_PATH: '/Workspace/Amol_Databricks/Notebook'  # Path where you want to deploy the notebook in Databricks
 
 pool:
-  vmImage: 'ubuntu-latest'  # Using an Ubuntu agent for the pipeline
+  vmImage: 'ubuntu-latest'
 
-# variables:
-#   - group: databricks-secret
 steps:
-# Checkout the code from GitHub
+# Step 1: Checkout the GitHub repository
 - task: Checkout@1
-  displayName: 'Checkout GitHub repository'
+  inputs:
+    repository: 'https://github.com/doijadajay/Amol_Databricks.git'  # Your GitHub repo URL
+    ref: 'refs/heads/main'  # Refers to the main branch
 
-# Install Databricks CLI
+# Step 2: Install Databricks CLI
 - script: |
     pip install databricks-cli
   displayName: 'Install Databricks CLI'
 
-# Set up Databricks CLI to connect to your Databricks workspace using secrets from the Variable Group
+# Step 3: Set up Databricks CLI configuration
 - script: |
-    echo "Setting up Databricks CLI"
-    # echo "DATABRICKS_HOST=${DATABRICKS_HOST}"  # Verify that secret variables are available
-    # echo "DATABRICKS_TOKEN=${DATABRICKS_TOKEN}"  # Verify that secret variables are available
-    # export DATABRICKS_HOST="${DATABRICKS_HOST}"  # Injecting secret environment variables
-    # export DATABRICKS_TOKEN="${DATABRICKS_TOKEN}"  # Injecting secret environment variables
-    # echo "DATABRICKS_HOST=${host}"  # Verify that secret variables are available
-    # echo "DATABRICKS_TOKEN=${token}"  # Verify that secret variables are available
-    export DATABRICKS_HOST=$(host)  # Injecting secret environment variables
-    export DATABRICKS_TOKEN=$(token)  # Injecting secret environment variables
-    databricks --version  # Verify Databricks CLI version
+    databricks configure --token <<EOF
+    $(DATABRICKS_HOST)
+    $(DATABRICKS_TOKEN)
+    EOF
   displayName: 'Configure Databricks CLI'
 
-# Clone the GitHub repository
+# Step 4: Deploy the notebook to Databricks workspace
 - script: |
-    git clone https://github.com/doijadajay/Amol_Databricks.git
-    cd Amol_Databricks
-  displayName: 'Clone GitHub repository'
-
-# Deploy the notebook to Databricks workspace
-- script: |
-    databricks workspace import --overwrite Amol_Databricks/Sample-Notebook.py /Workspace/Sample_Notebooks/Sample-Notebook.py
+    databricks workspace import $(Build.SourcesDirectory)/$(NOTEBOOK_PATH) --format SOURCE $(DEPLOY_PATH)
   displayName: 'Deploy notebook to Databricks'
