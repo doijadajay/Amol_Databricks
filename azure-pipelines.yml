@@ -1,37 +1,51 @@
 trigger:
-- main  # Trigger on changes to the main branch
-
-variables:
-  DATABRICKS_HOST: $(DATABRICKS_HOST)  # Reference to the environment variable for Databricks host
-  DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)  # Reference to the environment variable for Databricks token
-  NOTEBOOK_PATH: 'Sample-Notebook.py'  # Path to your notebook file in the repository
-  DEPLOY_PATH: '/Workspace/Sample_Notebook'  # Path where you want to deploy the notebook in Databricks
+- main  # Trigger the pipeline when changes are pushed to the 'main' branch
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-latest'  # Use an Ubuntu-based agent to run the pipeline
 
-steps:
-# Step 1: Checkout the GitHub repository
-- task: Checkout@1
-  inputs:
-    repository: 'https://github.com/doijadajay/Amol_Databricks.git'  # Your GitHub repo URL
-    ref: 'refs/heads/main'  # Refers to the main branch
+variables:
+  # Databricks workspace URL and token will be taken from the pipeline's secret variables
+  databricksWorkspaceUrl: 'https://adb-4276282781475924.4.azuredatabricks.net'  # Your Databricks Workspace URL
+  databricksToken: $(DATABRICKS_TOKEN)  # Databricks token stored as a secret in Azure DevOps
+  databricksFolderPath: '/Workspace/Sample_Notebook'  # Databricks Workspace path for the notebook
+  notebookFilePath: 'Sample-Notebook.py'  # Path to the notebook file in the repository
 
-# Step 2: Install Databricks CLI
-- script: |
-    pip install databricks-cli
-  displayName: 'Install Databricks CLI'
+jobs:
+- job: DeployToDatabricks
+  displayName: 'Deploy Notebook to Databricks Workspace'
+  
+  steps:
+  # Step 1: Checkout the code from GitHub repository
+  - checkout: self
+    displayName: 'Checkout Code from GitHub'
 
-# Step 3: Set up Databricks CLI configuration
-- script: |
-    databricks configure --token <<EOF
-    $(DATABRICKS_HOST)
-    $(DATABRICKS_TOKEN)
-    EOF
-  displayName: 'Configure Databricks CLI'
+  # Step 2: Install Python and Databricks CLI
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.8'
+    displayName: 'Use Python 3.8'
 
-# Step 4: Deploy the notebook to Databricks workspace
-- script: |
-    # Deploy the notebook to the Databricks workspace from the cloned repository
-    databricks workspace import $(Build.SourcesDirectory)/$(NOTEBOOK_PATH) --format SOURCE $(DEPLOY_PATH)
-  displayName: 'Deploy notebook to Databricks'
+  - script: |
+      pip install databricks-cli
+    displayName: 'Install Databricks CLI'
+
+  # Step 3: Configure Databricks CLI with token and workspace URL
+  - script: |
+      echo "$(databricksWorkspaceUrl)"
+      echo "$(databricksToken)"
+      databricks configure --token <<EOF
+      $(databricksWorkspaceUrl)
+      $(databricksToken)
+      EOF
+    displayName: 'Configure Databricks CLI'
+
+  # Step 4: Upload the notebook to Databricks workspace
+  - script: |
+      databricks workspace import ${{ variables.notebookFilePath }} ${{ variables.databricksFolderPath }}/Sample-Notebook.py --overwrite
+    displayName: 'Upload Notebook to Databricks Workspace'
+
+  # Step 5: Indicate success
+  - script: |
+      echo "Notebook deployed to Databricks Workspace successfully."
+    displayName: 'Deployment Successful'
