@@ -4,8 +4,8 @@ trigger:
 variables:
   DATABRICKS_HOST: $(DATABRICKS_HOST)  # Set this environment variable in your Azure DevOps pipeline variables
   DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)  # Set this environment variable in your Azure DevOps pipeline variables
-  NOTEBOOK_PATH: 'notebook.py'  # Path to your notebook file in the repository
-  DEPLOY_PATH: '/Workspace/Amol_Databricks/Notebook'  # Path where you want to deploy the notebook in Databricks
+  NOTEBOOK_PATH: 'Sample-Notebook.py'  # Path to your notebook file in the repository
+  DEPLOY_PATH: '/Workspace/Sample_Notebook'  # Path where you want to deploy the notebook in Databricks
 
 pool:
   vmImage: 'ubuntu-latest'
