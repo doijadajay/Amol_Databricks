@@ -30,22 +30,28 @@ jobs:
       pip install databricks-cli
     displayName: 'Install Databricks CLI'
 
-  # Step 3: Configure Databricks CLI with token and workspace URL
+  # Step 3: Print the Databricks workspace URL and token (for debugging)
   - script: |
-      echo "$(databricksWorkspaceUrl)"
-      echo "$(databricksToken)"
+      echo "Databricks Workspace URL: $(databricksWorkspaceUrl)"
+      echo "Databricks Token: $(databricksToken)"
+    displayName: 'Print Databricks Workspace URL and Token'
+
+  # Step 4: Configure Databricks CLI with token and workspace URL
+  - script: |
+      echo "Configuring Databricks CLI..."
       databricks configure --token <<EOF
       $(databricksWorkspaceUrl)
       $(databricksToken)
       EOF
     displayName: 'Configure Databricks CLI'
 
-  # Step 4: Upload the notebook to Databricks workspace
+  # Step 5: Upload the notebook to Databricks workspace
   - script: |
+      echo "Uploading notebook to Databricks workspace..."
       databricks workspace import ${{ variables.notebookFilePath }} ${{ variables.databricksFolderPath }}/Sample-Notebook.py --overwrite
     displayName: 'Upload Notebook to Databricks Workspace'
 
-  # Step 5: Indicate success
+  # Step 6: Indicate success
   - script: |
       echo "Notebook deployed to Databricks Workspace successfully."
     displayName: 'Deployment Successful'
