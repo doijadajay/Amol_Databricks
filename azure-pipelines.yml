@@ -6,9 +6,6 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'  # Using an Ubuntu agent for the pipeline
 
-variables:
-  - group: Databricks-sample-example  # Ensure 'databricks-secret' is a valid Variable Group
-
 steps:
   # Checkout the code from GitHub
   - task: Checkout@1
@@ -19,11 +16,11 @@ steps:
       pip install databricks-cli
     displayName: 'Install Databricks CLI'
 
-  # Set up Databricks CLI to connect to your Databricks workspace using secrets from the Variable Group
+  # Set up Databricks CLI to connect to your Databricks workspace using secret variables
   - script: |
       echo "Setting up Databricks CLI"
-      export DATABRICKS_HOST=$(host)  # Injecting secret environment variables
-      export DATABRICKS_TOKEN=$(token)  # Injecting secret environment variables
+      export DATABRICKS_HOST=$(DATABRICKS_HOST)  # Using the secret pipeline variable for host
+      export DATABRICKS_TOKEN=$(DATABRICKS_TOKEN)  # Using the secret pipeline variable for token
       echo "DATABRICKS_HOST=$DATABRICKS_HOST"  # Verify that the host is correctly set
       echo "DATABRICKS_TOKEN=$DATABRICKS_TOKEN"  # Verify that the token is correctly set
       databricks --version  # Verify Databricks CLI version
