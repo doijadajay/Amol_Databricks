@@ -1,0 +1,21 @@
+trigger:
+  branches:
+    include:
+      - main  # Trigger on changes to the main branch
+
+pool:
+  vmImage: 'ubuntu-latest'  # Using an Ubuntu agent for the pipeline
+
+variables:
+  - group: Databricks-sample-example  # Ensure 'databricks-secret' is a valid Variable Group
+
+steps:
+  # Checkout the code from GitHub
+  - task: Checkout@1
+    displayName: 'Checkout GitHub repository'
+
+  # Install Databricks CLI
+  - script: |
+      pip install databricks-cli
+      databricks --version
+    displayName: 'Install Databricks CLI'
