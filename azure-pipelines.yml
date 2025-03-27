@@ -2,8 +2,8 @@ trigger:
 - main  # Trigger on changes to the main branch
 
 variables:
-  DATABRICKS_HOST: $(DATABRICKS_HOST)  # Set this environment variable in your Azure DevOps pipeline variables
-  DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)  # Set this environment variable in your Azure DevOps pipeline variables
+  DATABRICKS_HOST: $(DATABRICKS_HOST)  # Reference to the environment variable for Databricks host
+  DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)  # Reference to the environment variable for Databricks token
   NOTEBOOK_PATH: 'Sample-Notebook.py'  # Path to your notebook file in the repository
   DEPLOY_PATH: '/Workspace/Sample_Notebook'  # Path where you want to deploy the notebook in Databricks
 
@@ -32,7 +32,6 @@ steps:
 
 # Step 4: Deploy the notebook to Databricks workspace
 - script: |
-    # The Checkout task already clones the repo, so we don't need git clone here
-    # Deploy the notebook to Databricks workspace
+    # Deploy the notebook to the Databricks workspace from the cloned repository
     databricks workspace import $(Build.SourcesDirectory)/$(NOTEBOOK_PATH) --format SOURCE $(DEPLOY_PATH)
   displayName: 'Deploy notebook to Databricks'
