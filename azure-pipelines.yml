@@ -32,6 +32,7 @@ steps:
 
 # Step 4: Deploy the notebook to Databricks workspace
 - script: |
-    # Deploy the notebook to the Databricks workspace
+    # The Checkout task already clones the repo, so we don't need git clone here
+    # Deploy the notebook to Databricks workspace
     databricks workspace import $(Build.SourcesDirectory)/$(NOTEBOOK_PATH) --format SOURCE $(DEPLOY_PATH)
   displayName: 'Deploy notebook to Databricks'
