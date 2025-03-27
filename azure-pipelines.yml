@@ -32,9 +32,6 @@ steps:
 
 # Step 4: Deploy the notebook to Databricks workspace
 - script: |
-    # Clone the GitHub repository (if not already done by the checkout task)
-    git clone https://github.com/doijadajay/Amol_Databricks.git
-
     # Deploy the notebook to the Databricks workspace
-    databricks workspace import ./Amol_Databricks/$(NOTEBOOK_PATH) --format SOURCE $(DEPLOY_PATH)
+    databricks workspace import $(Build.SourcesDirectory)/$(NOTEBOOK_PATH) --format SOURCE $(DEPLOY_PATH)
   displayName: 'Deploy notebook to Databricks'
